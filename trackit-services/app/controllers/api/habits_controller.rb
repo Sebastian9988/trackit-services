@@ -36,6 +36,8 @@ class Api::HabitsController < ApplicationController
     @habit = Habit.find(params[:id])
     today = Date.today.to_s
 
+    @habit.completed_dates ||= []
+
     if @habit.completed_dates.include?(today)
       @habit.completed_dates.delete(today)
       @habit.done_today = false
@@ -45,7 +47,7 @@ class Api::HabitsController < ApplicationController
     end
 
     @habit.save!
-    render json: @habit # 👈 acá va esa línea
+    render json: @habit
   end
 
   private
