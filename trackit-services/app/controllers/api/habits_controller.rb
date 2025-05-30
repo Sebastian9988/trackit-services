@@ -33,16 +33,19 @@ class Api::HabitsController < ApplicationController
   end
 
   def mark_done
+    @habit = Habit.find(params[:id])
     today = Date.today.to_s
-    @habit.done_today = true
-    @habit.completed_dates ||= []
-    @habit.completed_dates << today unless @habit.completed_dates.include?(today)
 
-    if @habit.save
-      render json: @habit
+    if @habit.completed_dates.include?(today)
+      @habit.completed_dates.delete(today)
+      @habit.done_today = false
     else
-      render json: { errors: @habit.errors.full_messages }, status: :unprocessable_entity
+      @habit.completed_dates << today
+      @habit.done_today = true
     end
+
+    @habit.save!
+    render json: @habit # 👈 acá va esa línea
   end
 
   private
